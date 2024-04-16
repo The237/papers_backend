@@ -1,4 +1,4 @@
-fastapi==0.110.1
+fastapi[all]
 nltk==3.8.1
 numpy==1.25.2
 pandas==2.2.2
