@@ -88,6 +88,8 @@ async def process_files(seed_file: UploadFile = File(...), article_file: UploadF
         # get the number of seeds
         seeds = seed_df.shape[0]
 
+        print(seeds)
+        
         # analyse similarities
         merged_df_clean_similarities = textAnalysis.analyze_similarity(
             dataset="Papa", seeds=seeds, tf_idf_matrix=tf_idf_matrix,
@@ -139,6 +141,7 @@ async def process_files(seed_file: UploadFile = File(...), article_file: UploadF
     except HTTPException as e:
         raise e
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=f"Une erreur s'est produite lors du traitement des fichiers : {str(e)}")
 
 if __name__ == '__main__':

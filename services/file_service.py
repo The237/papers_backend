@@ -10,6 +10,7 @@ async def read_file(filename):
     else:
         raise ValueError("Format de fichier non pris en charge.")
 
+    data = data[["title","abstract"]]
     data = data.dropna()
     
     return data
