@@ -10,6 +10,8 @@ async def read_file(filename):
     else:
         raise ValueError("Format de fichier non pris en charge.")
 
+    data = data.dropna()
+    
     return data
 
 # calculate number of elements and duplicates
@@ -30,6 +32,21 @@ def check_columns(data,object=""):
     if not all(column in data.columns for column in required_columns):
         raise ValueError(f"Les colonnes 'title' et 'abstract' doivent être présentes dans le fichier des ."+{object})
 
+def validate_file_names(seed_file_name, article_file_name):
+    warnings = []
+
+    if not seed_file_name.split(".")[0].endswith("_seeds"):
+        warnings.append("Le fichier de seeds ne se termine pas par '_seeds'.")
+
+    if not article_file_name.split(".")[0].endswith("_articles"):
+        warnings.append("Le fichier d'articles ne se termine pas par '_articles'.")
+
+    if seed_file_name.split("_")[0] != article_file_name.split("_")[0]:
+        warnings.append("Les noms de fichiers n'ont pas le même début.")
+
+    return warnings
+
+
 # save an uploaded file into the uploads file and return the file_path
 async def save_uploaded_file(uploaded_file):
     current_dir = os.path.dirname(os.path.realpath(__file__))
@@ -45,3 +62,4 @@ async def save_uploaded_file(uploaded_file):
         f.write(content)
     
     return file_path
+
