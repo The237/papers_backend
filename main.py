@@ -112,6 +112,12 @@ async def process_files(seed_file: UploadFile = File(...), article_file: UploadF
         csv_path = os.path.join("outputs", csv_filename)
 
         merged_df_clean_similarities.loc[merged_df_clean_similarities['similarity']>0,"label_included"] = 1
+        # rename labels
+        corresponding_values = {
+            1:"Included",
+            0:"Non Included"
+        }
+        merged_df_clean_similarities["label_included"] = merged_df_clean_similarities["label_included"].map(corresponding_values) 
         merged_df_clean_similarities[seeds:].to_csv(csv_path, index=False)
 
         # transform datto binary
