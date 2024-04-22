@@ -89,7 +89,7 @@ async def process_files(seed_file: UploadFile = File(...), article_file: UploadF
         seeds = seed_df.shape[0]
 
         print(seeds)
-        
+
         # analyse similarities
         merged_df_clean_similarities = textAnalysis.analyze_similarity(
             dataset="Papa", seeds=seeds, tf_idf_matrix=tf_idf_matrix,
@@ -102,7 +102,7 @@ async def process_files(seed_file: UploadFile = File(...), article_file: UploadF
         merged_df_clean_similarities = merged_df_clean_similarities[["title", "similarity", "label_included"]]
 
         # Arrondir les valeurs flottantes à deux décimales
-        merged_df_clean_similarities['similarity'] = merged_df_clean_similarities['similarity'].round(3)
+        merged_df_clean_similarities['similarity'] = merged_df_clean_similarities['similarity'].round(2)
 
         # add the probability col
         merged_df_clean_similarities = tas.transform_to_probabilities(merged_df_clean_similarities, number_column='similarity', probability_col_name='probability')
