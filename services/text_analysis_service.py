@@ -20,12 +20,15 @@ class TextAnalysisService:
 
         return tf_idf_matrix, df
 
-    def calculate_cosine_similarity(self, tf_idf_matrix, seeds=1, aggregation='mean'):
+    def calculate_cosine_similarity(self, tf_idf_matrix, seeds=1, aggregation='mean',weights=None):
         sg = cosine_similarity(tf_idf_matrix[:seeds, :], tf_idf_matrix)
 
         if seeds > 1:
             if aggregation == 'mean':
-                sg = np.mean(sg, axis=0)
+                if weights is not None:
+                    sg = np.average(sg, axis=0, weights=weights)
+                else:
+                    sg = np.mean(sg, axis=0)
             elif aggregation == 'min':
                 sg = np.min(sg, axis=0)
             elif aggregation == 'max':
@@ -44,12 +47,12 @@ class TextAnalysisService:
             return filtered_df.iloc[0][distance_col]
         return None
 
-    def analyze_similarity(self, dataset, seeds, tf_idf_matrix, df_cleaned_sorted, relevant_docs, total_docs,
+    def analyze_similarity(self, dataset, seeds, tf_idf_matrix, df_cleaned_sorted, relevant_docs, total_docs,weights,
             label_col='label_included'):
         def number_of_ones(df, n, label_col):
             return df.head(n)[label_col].sum()
 
-        cos_similarities_ = self.calculate_cosine_similarity(tf_idf_matrix, seeds, aggregation="mean")
+        cos_similarities_ = self.calculate_cosine_similarity(tf_idf_matrix, seeds, aggregation="mean",weights=weights)
         df_cleaned_sorted["similarity"] = cos_similarities_
         df_sorted_by_sim = df_cleaned_sorted.sort_values(by="similarity", ascending=False)
         threshold = self.get_threshold(df_sorted_by_sim, relevant_docs, label_col=label_col, distance_col='similarity')

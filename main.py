@@ -47,9 +47,11 @@ async def process_files(seed_file: UploadFile = File(...), article_file: UploadF
         article_file_path = await fs.save_uploaded_file(article_file)
 
         # files reading
-        seed_df = await fs.read_file(seed_file_path)
-        article_df = await fs.read_file(article_file_path)
+        seed_df = await fs.read_file(seed_file_path,data_type="seeds")
+        article_df = await fs.read_file(article_file_path,data_type="articles")
 
+        # get the weights
+        weights = list(seed_df["weights"])
         # verify "title" and "abstract" cols
         fs.check_columns(seed_df, "seeds")
         fs.check_columns(article_df, "articles")
@@ -93,7 +95,8 @@ async def process_files(seed_file: UploadFile = File(...), article_file: UploadF
         # analyse similarities
         merged_df_clean_similarities = textAnalysis.analyze_similarity(
             dataset="Papa", seeds=seeds, tf_idf_matrix=tf_idf_matrix,
-            df_cleaned_sorted=merged_df_clean, relevant_docs=seed_df.shape[0], total_docs=merged_df_clean.shape[0]
+            df_cleaned_sorted=merged_df_clean, relevant_docs=seed_df.shape[0], total_docs=merged_df_clean.shape[0],
+            weights = weights
         )
         # convert similarities to float
         merged_df_clean_similarities['similarity'] = merged_df_clean_similarities['similarity'].astype(float)

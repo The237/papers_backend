@@ -2,7 +2,7 @@ from pandas import read_csv, read_excel
 import os
 
 # read a file depending on his extension
-async def read_file(filename):
+async def read_file(filename,data_type):
     if filename.endswith(".csv"):
         data = read_csv(filename)
     elif filename.endswith((".xls", ".xlsx")):
@@ -10,7 +10,16 @@ async def read_file(filename):
     else:
         raise ValueError("Format de fichier non pris en charge.")
 
-    data = data[["title","abstract"]]
+    if data_type =="seeds":
+        if "weights" not in data.columns:
+            data['weights'] = 1/len(data)
+    elif data_type =="articles":
+        data["weights"] = 0
+    else:
+        raise ValueError("Type de données non pris en charge.")
+
+    data = data[["title","abstract","weights"]]
+
     data = data.dropna()
     
     return data
